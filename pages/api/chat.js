@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${process.env.OPENROUTER_KEY}`,
-      'HTTP-Referer': 'https://yourdomain.com',
+      'HTTP-Referer': 'https://nextjs-ai-chatbot-gules-tau-35.vercel.app/',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
