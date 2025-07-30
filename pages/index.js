@@ -44,63 +44,30 @@ export default function ChatApp() {
     }
   };
 
-  return (
-    <div className="d-flex flex-column vh-100 bg-light">
-      {/* Chat History */}
-      <div className="flex-grow-1 overflow-auto p-3">
-        {messages.map((msg, i) => (
-          <div 
-            key={i} 
-            className={`mb-2 ${msg.sender === 'user' ? 'text-end' : 'text-start'}`}
-          >
-            <div 
-              className={`d-inline-block p-3 rounded-3 ${msg.sender === 'user' 
-                ? 'bg-primary text-white' 
-                : 'bg-white border'}`}
-            >
-              {msg.text}
-            </div>
-          </div>
-        ))}
-        {isLoading && (
-          <div className="text-start mb-2">
-            <div className="d-inline-block p-3 rounded-3 bg-white border">
-              <div className="spinner-border spinner-border-sm text-secondary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-              <span className="ms-2">Thinking...</span>
-            </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Fixed Input */}
-      <div className="p-3 bg-white border-top">
-        <form onSubmit={handleSubmit} className="d-flex">
-          <input
-            type="text"
-            className="form-control me-2"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={isLoading ? "Wait for response..." : "Type your message..."}
-            disabled={isLoading}
-            autoFocus
-          />
-          <button 
-            className="btn btn-primary" 
-            type="submit"
-            disabled={isLoading || !input.trim()}
-          >
-            {isLoading ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />
-                Sending...
-              </>
-            ) : 'Send'}
-          </button>
-        </form>
-      </div>
+return (
+  <div className="chat-container">
+    {/* Messages (now scrollable independently) */}
+    <div className="messages">
+      {messages.map((msg, i) => (
+        <div key={i} className={`message ${msg.sender}`}>
+          {msg.text}
+        </div>
+      ))}
+      {isLoading && <div className="loading-indicator">...</div>}
+      <div ref={messagesEndRef} />
     </div>
-  );
-}
+
+    {/* Fixed input area */}
+    <div className="input-area">
+      <form onSubmit={handleSubmit}>
+        <input 
+          type="text" 
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type a message..."
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+);
