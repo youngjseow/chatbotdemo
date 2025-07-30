@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/globals.css'; // Import global styles
 
 export default function ChatApp() {
   const [input, setInput] = useState('');
@@ -15,11 +16,10 @@ export default function ChatApp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return; // Prevent empty/spam submissions
+    if (!input.trim() || isLoading) return;
 
     // Add user message
-    const userMessage = { sender: 'user', text: input };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(prev => [...prev, { sender: 'user', text: input }]);
     setInput('');
     setIsLoading(true);
 
@@ -44,30 +44,52 @@ export default function ChatApp() {
     }
   };
 
-return (
-  <div className="chat-container">
-    {/* Messages (now scrollable independently) */}
-    <div className="messages">
-      {messages.map((msg, i) => (
-        <div key={i} className={`message ${msg.sender}`}>
-          {msg.text}
-        </div>
-      ))}
-      {isLoading && <div className="loading-indicator">...</div>}
-      <div ref={messagesEndRef} />
-    </div>
+  return (
+    <div className="chat-container">
+      {/* Messages area (scrollable) */}
+      <div className="messages">
+        {messages.map((msg, i) => (
+          <div 
+            key={i} 
+            className={`message ${msg.sender === 'user' ? 'user-message' : 'ai-message'}`}
+          >
+            {msg.text}
+          </div>
+        ))}
+        {isLoading && (
+          <div className="message ai-message">
+            <div className="spinner-border spinner-border-sm text-secondary me-2" role="status" />
+            Thinking...
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
 
-    {/* Fixed input area */}
-    <div className="input-area">
-      <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-        />
-        <button type="submit">Send</button>
-      </form>
+      {/* Fixed input area at bottom */}
+      <div className="input-area">
+        <form onSubmit={handleSubmit} className="message-form">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={isLoading ? "Wait for response..." : "Type your message..."}
+            disabled={isLoading}
+            className="message-input"
+          />
+          <button 
+            type="submit" 
+            disabled={isLoading || !input.trim()}
+            className="send-button"
+          >
+            {isLoading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-1" role="status" />
+                Sending...
+              </>
+            ) : 'Send'}
+          </button>
+        </form>
+      </div>
     </div>
-  </div>
-);
+  );
+}
