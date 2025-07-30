@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/globals.css'; // Import global styles
+import '../styles/globals.css';
 
 export default function ChatApp() {
   const [input, setInput] = useState('');
@@ -9,7 +9,6 @@ export default function ChatApp() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Auto-scroll to bottom when messages update
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -18,21 +17,17 @@ export default function ChatApp() {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    // Add user message
     setMessages(prev => [...prev, { sender: 'user', text: input }]);
     setInput('');
     setIsLoading(true);
 
     try {
-      // Get AI response
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: input })
       });
       const data = await res.json();
-
-      // Add AI response
       setMessages(prev => [...prev, { sender: 'ai', text: data.reply }]);
     } catch (error) {
       setMessages(prev => [...prev, { 
@@ -46,7 +41,6 @@ export default function ChatApp() {
 
   return (
     <div className="chat-container">
-      {/* Messages area (scrollable) */}
       <div className="messages">
         {messages.map((msg, i) => (
           <div 
@@ -65,7 +59,6 @@ export default function ChatApp() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Fixed input area at bottom */}
       <div className="input-area">
         <form onSubmit={handleSubmit} className="message-form">
           <input
